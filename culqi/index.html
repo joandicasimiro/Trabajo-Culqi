@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu Tienda con Culqi</title>
+  <link rel="stylesheet" href="style.css"> 
+  <script src="https://checkout.culqi.com/js/v4"></script>
+</head>
+<body>
+  <script>
+    Culqi.publicKey = 'pk_test_XBWsfPU0w7KmcLF9';
+  </script>
+
+  <script>
+    Culqi.settings({
+      title: 'Tienda Peruanita',
+      currency: 'PEN',
+      description: 'Set Maquillaje',
+      amount: 5000,
+      order: 'ord_live_0CjjdWhFpEAZlxlz'
+    });
+  </script>
+
+  <script>
+    Culqi.options({
+      style: {
+        logo: 'IMAG/image.png',
+        maincolor: '#0ec1c1',
+        buttontext: '#ffffff',
+        maintext: '#4A4A4A',
+        desctext: '#4A4A4A'
+      }
+    });
+  </script>
+
+  <div class="container">
+    <div class="payment-form">
+      <h1>Realizar Pago</h1>
+
+      <form id="payment-form">
+        
+        <!-- Ingresar número de tarjeta  --> 
+        <div class="form-group">
+          <label for="card-number">Número de Tarjeta</label>
+          <input type="text" id="card-number" oninput="validarNumeroNT(document.getElementById('card-number'))" maxlength="16" placeholder="Ingrese su número de tarjeta" required>
+          <p id="mensajeError1" style="color: red;"></p>
+          <script>
+            function validarNumeroNT(input) {
+                // Permite solo dígitos del 0 al 9
+                var regex = /^[0-9]+$/;
+                var valor = input.value;
+    
+                if (!regex.test(valor)) {
+                    document.getElementById("mensajeError1").textContent = "Ingrese los valores correctos.";
+                    // Elimina los caracterres no numericos
+                    input.value = valor.replace(/[^0-9]/g, '');
+                } else {
+                    // Si el valor es numérico, borra cualquier mensaje de error
+                    document.getElementById("mensajeError1").textContent = "";
+
+                    // Formatea el valor en grupos de 4 dígitos
+                    var formattedValue = valor.replace(/(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
+                    input.value = formattedValue;
+                }
+            }
+        </script>   
+        </div>
+        
+        <!-- Ingresar fecha de vencimiento  --> 
+        <div class="form-group">
+          <label for="expiry">Fecha de Vencimiento</label>
+          <input type="text" id="expiry" oninput="validarNumeroFV(document.getElementById('expiry'))" maxlength="5" placeholder="MM/YY" required>
+          <p id="mensajeError2" style="color: red;"></p>
+          <script>
+            function validarNumeroFV(input) {
+                // Permite solo dígitos del 0 al 9
+                var regex = /^[0-9/]+$/;
+                var valor = input.value;
+    
+                if (!regex.test(valor)) {
+                    // Si el valor no es numérico, muestra un mensaje de error
+                    document.getElementById("mensajeError2").textContent = "Ingrese los valores correctos.";
+                    // Elimina los caracteres no numéricos del valor del input
+                    input.value = valor.replace(/[^0-9/]/g, '');
+                } else {
+                    // Si el valor es numérico, borra cualquier mensaje de error
+                    document.getElementById("mensajeError2").textContent = "";
+                }
+            }
+        </script> 
+        <script>
+          // Obtén el elemento del campo de entrada de fecha de vencimiento
+          const expiryInput = document.getElementById('expiry');
+
+          // Agrega un evento de escucha para el evento 'input' en el campo de entrada
+          expiryInput.addEventListener('input', function () {
+            // Obtén el valor actual del campo de entrada
+            let inputValue = this.value;
+
+            // Remueve cualquier caracter no numérico
+            inputValue = inputValue.replace(/\D/g, '');
+
+            // Formatea el valor de acuerdo a 'MM/YY' (dos dígitos para mes y dos dígitos para año)
+            if (inputValue.length > 2) {
+              inputValue = inputValue.slice(0, 2) + '/' + inputValue.slice(2, 4);
+            }
+
+            // Actualiza el valor del campo de entrada con la entrada formateada
+            this.value = inputValue;
+          });
+        </script> 
+        </div>
+       
+        <!-- Ingresar codigo de seguridad  --> 
+        <div class="form-group">
+          <label for="cvv">Código de Seguridad (CVV)</label>
+          <input type="text" id="cvv" oninput="validarNumeroCVV(document.getElementById('cvv'))" maxlength="3" placeholder="CVV" required>
+          <p id="mensajeError3" style="color: red;"></p>
+          <script>
+            function validarNumeroCVV(input) {
+                // Expresión regular que permite solo dígitos del 0 al 9
+                var regex = /^[0-9]+$/;
+                var valor = input.value;
+    
+                if (!regex.test(valor)) {
+                    // Si el valor no es numérico, muestra un mensaje de error
+                    document.getElementById("mensajeError3").textContent = "Ingresar valores correctos.";
+                    // Elimina los caracteres no numéricos del valor del input
+                    input.value = valor.replace(/[^0-9]/g, '');
+                } else {
+                    // Si el valor es numérico, borra cualquier mensaje de error
+                    document.getElementById("mensajeError3").textContent = "";
+                }
+            }
+        </script>   
+        </div>
+        
+        <!-- Botón de pagar  --> 
+        <button id="btn_pagar">Pagar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const btn_pagar = document.getElementById('btn_pagar');
+  
+    btn_pagar.addEventListener('click', function (e) {
+      Culqi.open();
+      e.preventDefault();
+    });
+  </script>
+
+  <script>
+    function culqi() {
+      if (Culqi.token) {  
+        const token = Culqi.token;
+        console.log(`Se ha creado el objeto Token: ${token}.`);
+      } else if (Culqi.order) {  
+        const order = Culqi.order;
+        console.log(`Se ha creado el objeto Order: ${order}. para PagoEfectivo`);
+      } else {
+        console.log(`Error: ${Culqi.error.merchant_message}.`);
+      }
+    }
+  </script>
+</body>
+</html>
